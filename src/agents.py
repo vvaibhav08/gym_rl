@@ -60,7 +60,7 @@ class QLearningAgent():
 
     def update(self, action, state, reward, new_state):
         if self.is_training:
-            self.Q[state, action] = self.Q[state, action] + self.alpha * (reward + self.gamma * (np.max(self.Q[new_state, :]) - self.Q[state, action]))
+            self.Q[state, action] = self.Q[state, action] + self.alpha * (reward + self.gamma * np.max(self.Q[new_state, :]) - self.Q[state, action])
 
 
 
