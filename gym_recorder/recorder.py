@@ -1,17 +1,17 @@
 from dataclasses import dataclass
-from typing import Tuple
 
 import gym
 from .const import BLACK
 import cv2
 
+
 class Recorder(gym.Wrapper):
-    """ 
+    """
     save simulation as mp4
     write text on a frame
     """
 
-    def __init__(self, env, path = "", videoname = "out", episode_num = 1, codec="vp09", size=(600,400), **kwargs):
+    def __init__(self, env, path="", videoname="out", episode_num=1, codec="vp09", size=(600, 400), **kwargs):
         """
         episode_num: the number of episode a file contains
         """
@@ -23,16 +23,16 @@ class Recorder(gym.Wrapper):
         self.codec = codec
         self.size = size
 
-        self.itemqueue =  []
+        self.itemqueue = []
         self.episode_num = episode_num
         self.count_episode = 0
-    
+
     def reset(self, **kwargs):
         obs = super().reset(**kwargs)
         if self.count_episode == 0:
             self.start_recording()
         return obs
-    
+
     def step(self, action):
         self.record_step()
         obs, reward, done, trunc, info = self.env.step(action)
@@ -41,19 +41,19 @@ class Recorder(gym.Wrapper):
             if self.count_episode == self.episode_num:
                 self.stop_recording()
                 self.count_episode = 0
-        
+
         return obs, reward, done, info
-    
+
     def start_recording(self):
         fourcc = cv2.VideoWriter_fourcc(*self.codec)
-        
-        video_name =  f"{self.videoname}_{self.videonumber}.mp4"
+
+        video_name = f"{self.videoname}_{self.videonumber}.mp4"
         if self.path == "":
             path = video_name
         else:
             path = f"{self.path}/{video_name}"
         self.video = cv2.VideoWriter(path, fourcc, 50.0, self.size)
-    
+
     def stop_recording(self):
         self.video.release()
         self.videonumber += 1
@@ -68,15 +68,16 @@ class Recorder(gym.Wrapper):
             txt_pos += 20
         self.itemqueue = []
         self.video.write(im)
-    
+
     def close(self):
-        """ if there is a remaining episode, save it
-        """
+        """if there is a remaining episode, save it"""
 
         if self.count_episode != 0:
             self.stop_recording()
 
-Color = Tuple[int, int, int]
+
+Color = tuple[int, int, int]
+
 
 @dataclass
 class Item:
